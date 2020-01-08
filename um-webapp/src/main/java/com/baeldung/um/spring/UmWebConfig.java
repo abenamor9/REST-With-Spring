@@ -4,9 +4,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan({ "com.baeldung.common.web", "com.baeldung.um.web" })
+@PropertySource({ "classpath:web-${envTarget:local}.properties" })
 @EnableWebMvc
 public class UmWebConfig implements WebMvcConfigurer {
 
