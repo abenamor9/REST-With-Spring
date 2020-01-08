@@ -103,6 +103,33 @@
             </resource>
         </resources>
 
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+               <configuration>
+                   <container>
+                       <containerId>tomcat8x</containerId>
+                       <type>embedded</type>
+                       <systemProperties>
+                            <envTarget>dev</envTarget>
+                           <persistenceTarget>h2</persistenceTarget>
+                       </systemProperties>
+                   </container>
+
+                   <configuration>
+                       <properties>
+                           <cargo.servlet.port>8082</cargo.servlet.port>
+                           <cargo.rmi.port>8006</cargo.rmi.port>
+                           <cargo.tomcat.ajp.port>8010</cargo.tomcat.ajp.port>
+                       </properties>
+                   </configuration>
+
+               </configuration>
+            </plugin>
+
+        </plugins>
+
     </build>
 
     <profiles>
@@ -130,7 +157,7 @@
                                         <include>**/*IntegrationTest.java</include>
                                     </includes>
                                     <systemPropertyVariables>
-                                        <persistenceTarget>test</persistenceTarget>
+                                        <persistenceTarget>h2</persistenceTarget>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
@@ -162,7 +189,31 @@
                                     <includes>
                                         <include>**/*LiveTest.java</include>
                                     </includes>
+                                    <systemPropertyVariables>
+                                        <webTarget>cargo</webTarget>
+                                    </systemPropertyVariables>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>start-container</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
