@@ -1,5 +1,6 @@
 package com.baeldung.common.persistence.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baeldung.common.interfaces.IWithName;
 import com.baeldung.common.persistence.ServicePreconditions;
 import com.google.common.collect.Lists;
+import reactor.core.publisher.Flux;
 
 @Transactional
 public abstract class AbstractRawService<T extends IWithName> implements IRawService<T> {
@@ -44,8 +46,8 @@ public abstract class AbstractRawService<T extends IWithName> implements IRawSer
 
     @Override
     @Transactional(readOnly = true)
-    public List<T> findAll() {
-        return Lists.newArrayList(getDao().findAll());
+    public Flux<T> findAll() {
+        return Flux.fromStream(Lists.newArrayList(getDao().findAll()).stream()) ;
     }
 
     @Override
@@ -57,13 +59,13 @@ public abstract class AbstractRawService<T extends IWithName> implements IRawSer
 
     @Override
     @Transactional(readOnly = true)
-    public List<T> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder) {
+    public Flux<T> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder) {
         final Sort sortInfo = constructSort(sortBy, sortOrder);
         final List<T> content = getDao().findAll(PageRequest.of(page, size, sortInfo)).getContent();
         if (content == null) {
-            return Lists.newArrayList();
+            return  Flux.fromStream(new ArrayList<T>().stream());
         }
-        return content;
+        return Flux.fromStream(content.stream());
     }
 
     @Override
@@ -74,19 +76,19 @@ public abstract class AbstractRawService<T extends IWithName> implements IRawSer
 
     @Override
     @Transactional(readOnly = true)
-    public List<T> findAllPaginated(final int page, final int size) {
+    public Flux<T> findAllPaginated(final int page, final int size) {
         final List<T> content = getDao().findAll(PageRequest.of(page, size, null)).getContent();
         if (content == null) {
-            return Lists.newArrayList();
+            return Flux.fromStream(new ArrayList<T>().stream());
         }
-        return content;
+        return Flux.fromStream(content.stream());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<T> findAllSorted(final String sortBy, final String sortOrder) {
+    public Flux<T> findAllSorted(final String sortBy, final String sortOrder) {
         final Sort sortInfo = constructSort(sortBy, sortOrder);
-        return Lists.newArrayList(getDao().findAll(sortInfo));
+        return Flux.fromStream(Lists.newArrayList(getDao().findAll(sortInfo)).stream()) ;
     }
 
     // save/create/persist
