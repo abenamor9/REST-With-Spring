@@ -1,16 +1,12 @@
 package com.baeldung.um.persistence.model;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.PastOrPresent;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.baeldung.common.interfaces.INameableDto;
@@ -48,6 +44,13 @@ public class User implements INameableEntity, INameableDto {
     @JoinTable(joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") })
     private Set<Role> roles;
     // @formatter:on
+
+    @ElementCollection
+    private Set<@Email String> alternativesEmailAdresses = new HashSet<>();
+
+    @Temporal(TemporalType.DATE)
+    @PastOrPresent
+    private Date dateOfBirth;
 
     public User() {
         super();
