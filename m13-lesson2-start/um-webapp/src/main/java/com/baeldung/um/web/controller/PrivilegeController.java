@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,8 @@ import com.baeldung.common.web.controller.ISortingController;
 import com.baeldung.um.persistence.model.Privilege;
 import com.baeldung.um.service.IPrivilegeService;
 import com.baeldung.um.util.UmMappings;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebInputException;
 
 @RestController
 @RequestMapping(UmMappings.PRIVILEGES)
@@ -70,6 +73,9 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody final Privilege resource) {
+        if(StringUtils.isEmpty(resource.getName())) {
+            throw new ServerWebInputException("Name must not be empty");
+        }
         createInternal(resource);
     }
 
