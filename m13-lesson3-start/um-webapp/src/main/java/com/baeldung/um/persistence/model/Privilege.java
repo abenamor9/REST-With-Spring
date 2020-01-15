@@ -2,6 +2,7 @@ package com.baeldung.um.persistence.model;
 
 import java.util.Set;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,7 +35,7 @@ public class Privilege implements INameableEntity, INameableDto {
     @Column()
     private String description;
 
-    @JsonIgnore
+    @JsonbTransient
     @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
